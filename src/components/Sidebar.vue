@@ -5,18 +5,42 @@
     permanent
     @click="rail = false"
   >
-    <v-list-item prepend-icon="mdi-menu" title="Insynerger">
+    <!-- <v-list-item :prepend-icon="!rail ? undefined : 'mdi-menu'">
+      <img src="../assets/Insynerger.svg" alt="Image" class="mt-3" />
+
       <template v-slot:append>
         <v-btn
-          variant="text"
-          color="black"
-          icon="mdi-window-close"
+          variant="plain"
+          color="white"
+          :icon="rail ? undefined : 'mdi-window-close'"
+          size="small"
+          width="28"
+          height="28"
           @click.stop="rail = !rail"
         ></v-btn>
       </template>
-    </v-list-item>
+    </v-list-item> -->
 
     <v-list v-model:opened="open" density="compact">
+
+      <v-list-item
+        v-bind="props"
+        :prepend-icon="!rail ? undefined : 'mdi-menu'"
+      >
+        <img src="../assets/Insynerger.svg" alt="Image" class="mt-3" />
+        <template v-slot:append>
+          <v-btn
+            variant="plain"
+            color="white"
+            :icon="rail ? undefined : 'mdi-window-close'"
+            size="small"
+            width="28"
+            height="28"
+            @click.stop="rail = !rail"
+          ></v-btn>
+        </template>
+      </v-list-item>
+
       <v-list-group value="Home">
         <template v-slot:activator="{ props }">
           <v-list-item
@@ -32,18 +56,18 @@
           :title="title"
           prepend-icon="mdi-circle-medium"
           :value="title"
-          active-color="pink"
           rounded
+          class="mainItem"
         >
           <template v-slot:append v-if="title === '全部功能'">
             <v-badge color="success" content="NEW" inline></v-badge>
-            <v-badge  content="1" inline></v-badge>
+            <v-badge content="1" inline></v-badge>
           </template>
         </v-list-item>
       </v-list-group>
       <v-divider />
 
-      <v-list-group value="functions">
+      <v-list-group value="functions" class="mainFunction">
         <template v-slot:activator="{ props }">
           <v-list-item
             v-bind="props"
@@ -52,12 +76,13 @@
           ></v-list-item>
         </template>
 
-        <v-list-group value="item" class="mainFunction">
+        <v-list-group value="item">
           <template v-slot:activator="{ props }">
             <v-list-item
               v-bind="props"
               title="智慧交通管理"
               prepend-icon="mdi-circle-medium"
+              class="mainItem"
             ></v-list-item>
           </template>
 
@@ -70,10 +95,25 @@
         </v-list-group>
       </v-list-group>
     </v-list>
+
+    <template v-slot:append>
+      <v-divider />
+      <div class="pt-4 pb-4 d-flex justify-center">
+        <v-btn
+          icon="mdi-white-balance-sunny"
+          variant="outlined"
+          color="medium-emphasis"
+          size="small"
+          @click="toggleTheme"
+        ></v-btn>
+      </div>
+    </template>
   </v-navigation-drawer>
 </template>
 <script setup>
 import { ref } from "vue";
+import { useTheme } from "vuetify";
+
 const open = ref(["Users"]);
 const home = ["方案", "全部功能", "已購買", "未購買"];
 
@@ -81,14 +121,21 @@ const cruds = ["地圖", "事件管理", "設備管理", "統計"];
 
 const drawer = ref(true);
 const rail = ref(true);
+
+const darkMode = ref(false);
+const theme = useTheme();
+
+const toggleTheme = () => {
+  darkMode.value = !darkMode.value;
+  theme.global.name.value = darkMode.value ? "dark" : "light";
+};
 </script>
 
 <style scoped>
-.v-list-group__items .v-list-item {
+.v-list .mainItem {
   padding-inline-start: 16px !important;
 }
-
-.subMenu {
-  /* padding-inline-start: 32px !important; */
+.mainItem + .v-list-group__items .v-list-item {
+  padding-inline-start: 70px !important;
 }
 </style>
