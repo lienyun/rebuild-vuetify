@@ -1,7 +1,7 @@
 <template>
   <h1>google map test demo</h1>
   <GoogleMap
-    api-key="AIzaSyAfjabQ1c5Cwd9H7djheg3rZM3mzhxptvk"
+    api-key="YOUR-API-KEY"
     style="width: 100%; height: 90%"
     icon="../assets/logo.svg"
     :center="center"
