@@ -5,26 +5,8 @@
     permanent
     @click="rail = false"
   >
-    <!-- <v-list-item :prepend-icon="!rail ? undefined : 'mdi-menu'">
-      <img src="../assets/Insynerger.svg" alt="Image" class="mt-3" />
-
-      <template v-slot:append>
-        <v-btn
-          variant="plain"
-          color="white"
-          :icon="rail ? undefined : 'mdi-window-close'"
-          size="small"
-          width="28"
-          height="28"
-          @click.stop="rail = !rail"
-        ></v-btn>
-      </template>
-    </v-list-item> -->
-
     <v-list v-model:opened="open" density="compact">
-
       <v-list-item
-        v-bind="props"
         :prepend-icon="!rail ? undefined : 'mdi-menu'"
       >
         <img src="../assets/Insynerger.svg" alt="Image" class="mt-3" />
@@ -56,7 +38,7 @@
           :title="title"
           prepend-icon="mdi-circle-medium"
           :value="title"
-          rounded
+          rounded-xl
           class="mainItem"
         >
           <template v-slot:append v-if="title === '全部功能'">
@@ -80,18 +62,19 @@
           <template v-slot:activator="{ props }">
             <v-list-item
               v-bind="props"
-              title="智慧交通管理"
+              title="test"
               prepend-icon="mdi-circle-medium"
               class="mainItem"
             ></v-list-item>
           </template>
-
-          <v-list-item
-            v-for="(title, i) in cruds"
+          <router-link v-for="(crud, i) in cruds" :to="crud.href">
+            <v-list-item
             :key="i"
-            :value="title"
-            :title="title"
+            :value="crud.title"
+            :title="crud.title"
           ></v-list-item>
+          </router-link>
+          
         </v-list-group>
       </v-list-group>
     </v-list>
@@ -117,7 +100,18 @@ import { useTheme } from "vuetify";
 const open = ref(["Users"]);
 const home = ["方案", "全部功能", "已購買", "未購買"];
 
-const cruds = ["地圖", "事件管理", "設備管理", "統計"];
+//const cruds = ["地圖", "事件管理", "設備管理", "統計"];
+
+const cruds = [
+{ title: "地圖", href: "/map" },
+{ title: "圖表", href: "/highchart" },
+{ title: "圖表2", href: "/highchart2" },
+{ title: "datatable", href: "/datatable" },
+{ title: "元素", href: "/element" },
+{ title: "選擇日期", href: "/datepicker" },
+
+
+];
 
 const drawer = ref(true);
 const rail = ref(true);
