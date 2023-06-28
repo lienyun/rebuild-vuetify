@@ -8,6 +8,11 @@ import Highchart2 from './views/Highchart2.vue'
 import DataTable from './views/DataTable.vue'
 import Element from './views/Element.vue'
 import DatePicker from './views/DatePicker.vue'
+import Pagination from './views/Pagination.vue'
+import Dialog from './views/Dialog.vue'
+import Carousel from './views/Carousel.vue'
+import Login from './views/Login.vue'
+
 
 const routes = [
     {
@@ -54,6 +59,26 @@ const routes = [
         path: '/datepicker',
         name: 'datepicker',
         component: DatePicker
+    },
+    {
+        path: '/pagination',
+        name: 'pagination',
+        component: Pagination
+    },
+    {
+        path: '/dialog',
+        name: 'dialog',
+        component: Dialog
+    },
+    {
+        path: '/carousel',
+        name: 'carousel',
+        component: Carousel
+    },
+    {
+        path: '/login',
+        name: 'login',
+        component: Login
     },
 ];
 

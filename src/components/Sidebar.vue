@@ -1,6 +1,5 @@
 <template>
   <v-navigation-drawer
-    v-model="drawer"
     :rail="rail"
     permanent
     @click="rail = false"
@@ -67,7 +66,7 @@
               class="mainItem"
             ></v-list-item>
           </template>
-          <router-link v-for="(crud, i) in cruds" :to="crud.href">
+          <router-link v-for="(crud, i) in cruds" :to="crud.href" class="text-linkColor">
             <v-list-item
             :key="i"
             :value="crud.title"
@@ -94,13 +93,12 @@
   </v-navigation-drawer>
 </template>
 <script setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useTheme } from "vuetify";
 
 const open = ref(["Users"]);
 const home = ["方案", "全部功能", "已購買", "未購買"];
 
-//const cruds = ["地圖", "事件管理", "設備管理", "統計"];
 
 const cruds = [
 { title: "地圖", href: "/map" },
@@ -109,19 +107,35 @@ const cruds = [
 { title: "datatable", href: "/datatable" },
 { title: "元素", href: "/element" },
 { title: "選擇日期", href: "/datepicker" },
+{ title: "Pagination", href: "/pagination" },
+{ title: "Dialog", href: "/dialog" },
+{ title: "Carousel", href: "/carousel" },
+{ title: "Login", href: "/login" },
 
 
 ];
 
-const drawer = ref(true);
+// const drawer = ref(true);
 const rail = ref(true);
+watch(
+  ()=> open.value,
+  (newValue, oldValue) =>{
+    if(newValue === true){
+      console.log('open drawer')
+    } else {
+      console.log('close drawer')
+    }
+  },{ immediate: true } 
+)
+
 
 const darkMode = ref(false);
 const theme = useTheme();
 
 const toggleTheme = () => {
+  console.log('toggleTheme')
   darkMode.value = !darkMode.value;
-  theme.global.name.value = darkMode.value ? "dark" : "light";
+  theme.global.name.value = darkMode.value ? "customDarkTheme" : "customLightTheme";
 };
 </script>
 
@@ -131,5 +145,8 @@ const toggleTheme = () => {
 }
 .mainItem + .v-list-group__items .v-list-item {
   padding-inline-start: 70px !important;
+}
+a {
+  text-decoration: none;
 }
 </style>

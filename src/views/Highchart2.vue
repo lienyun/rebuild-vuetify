@@ -7,20 +7,13 @@
     :oneToOneUpdate="false"
     :animateOnUpdate="true"
     @rendered="onRender"/>
-    <p>highchart還是用這個套件吧</p>
+    <p>不用這個套件ㄌ</p>
 </template>
-<script>
+<script setup>
   import VueHighcharts from 'vue3-highcharts';
   import { ref, computed } from 'vue'
 
-  export default {
-    name: 'SimpleChart',
 
-    components: {
-      VueHighcharts,
-    },
-
-    setup() {
       const seriesData = ref([25, 39, 30, 15]);
       const categories = ref(['Jun', 'Jul', 'Aug', 'Sept']);
 
@@ -49,10 +42,5 @@
         console.log('Chart rendered');
       };
 
-      return {
-        chartOptions,
-        onRender,
-      };
-    },
-  };
+
 </script>

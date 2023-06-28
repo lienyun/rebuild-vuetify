@@ -5,11 +5,6 @@
 </template>
 
 <script>
-import Highcharts from 'highcharts'
-import exportingInit from 'highcharts/modules/exporting'
-
-exportingInit(Highcharts)
-
 export default {
   data() {
     return {
