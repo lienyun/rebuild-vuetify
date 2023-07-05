@@ -23,11 +23,16 @@
     </v-list>
   </v-navigation-drawer>
 
+
   <v-btn
     icon="mdi-office-building"
     class="groupIcon"
     @click.stop="drawer = !drawer"
   ></v-btn>
+
+
+
+
 </template>
 
 <script setup>
@@ -40,7 +45,7 @@ const group = ["資安測試","台大"];
 
 <style scoped>
 .groupIcon {
-  position: absolute;
+  position: fixed;
   bottom: 2rem;
   right: 2rem;
 }

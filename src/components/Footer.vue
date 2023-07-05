@@ -24,7 +24,9 @@ footer {
   position: absolute;
   bottom: 0;
   z-index: 0;
-  width: calc(100% - 55px)
-  /* width: calc(100% - 255px); */
+  width: 100%
+}
+.isLogin {
+  width: calc(100% - 55px);
 }
 </style>

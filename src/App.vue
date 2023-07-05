@@ -1,21 +1,37 @@
 <template>
   <v-app>
-    <v-main>
-      <SideBar></SideBar>
-      <RouterView></RouterView>
-      <Tree></Tree>
+    <div class="content" :class="store.isLogin ? 'isLogin': ''">
+      <Header></Header>
+      <SideBar v-if="store.isLogin"></SideBar>
+      <div class="ma-5">
+        <RouterView></RouterView>
+      </div>
+      <Tree v-if="store.isLogin"></Tree>
       <Footer></Footer>
-    </v-main>
+    </div>
+
+
   </v-app>
 </template>
 
 <script setup>
-import SideBar from './components/Sidebar.vue'
-import Tree from './components/Tree.vue'
-import Footer from './components/Footer.vue'
+import SideBar from "./components/Sidebar.vue";
+import Tree from "./components/Tree.vue";
+import Footer from "./components/Footer.vue";
+import Header from "./components/Header.vue";
+
+import { useLoginStore } from "./stores/login";
+
+const store = useLoginStore();
+
 
 </script>
 
 <style scoped>
+
+
+.isLogin {
+  margin-left: 3.5rem;
+}
 
 </style>

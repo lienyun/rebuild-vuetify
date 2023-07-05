@@ -4,11 +4,13 @@
     permanent
     @click="rail = false"
   >
+  <div class="overflow-y-auto h-100" :class="scrollbarTheme" >
     <v-list v-model:opened="open" density="compact">
       <v-list-item
         :prepend-icon="!rail ? undefined : 'mdi-menu'"
       >
-        <img src="../assets/Insynerger.svg" alt="Image" class="mt-3" />
+      <router-link to="/"><img src="../assets/Insynerger.svg" alt="Image" class="mt-3" /></router-link>
+        
         <template v-slot:append>
           <v-btn
             variant="plain"
@@ -18,11 +20,12 @@
             width="28"
             height="28"
             @click.stop="rail = !rail"
+            @click="closeSidebar"
           ></v-btn>
         </template>
       </v-list-item>
 
-      <v-list-group value="Home">
+      <v-list-group value="home">
         <template v-slot:activator="{ props }">
           <v-list-item
             v-bind="props"
@@ -66,6 +69,7 @@
               class="mainItem"
             ></v-list-item>
           </template>
+
           <router-link v-for="(crud, i) in cruds" :to="crud.href" class="text-linkColor">
             <v-list-item
             :key="i"
@@ -77,6 +81,8 @@
         </v-list-group>
       </v-list-group>
     </v-list>
+  </div>
+
 
     <template v-slot:append>
       <v-divider />
@@ -96,11 +102,12 @@
 import { ref, watch } from "vue";
 import { useTheme } from "vuetify";
 
-const open = ref(["Users"]);
+const open = ref([]); //設定哪些item預設要打開
 const home = ["方案", "全部功能", "已購買", "未購買"];
 
 
 const cruds = [
+{ title: "設備管理", href: "/device" },
 { title: "地圖", href: "/map" },
 { title: "圖表", href: "/highchart" },
 { title: "圖表2", href: "/highchart2" },
@@ -112,31 +119,38 @@ const cruds = [
 { title: "Carousel", href: "/carousel" },
 { title: "Login", href: "/login" },
 
-
 ];
 
-// const drawer = ref(true);
 const rail = ref(true);
-watch(
-  ()=> open.value,
-  (newValue, oldValue) =>{
-    if(newValue === true){
-      console.log('open drawer')
-    } else {
-      console.log('close drawer')
-    }
-  },{ immediate: true } 
-)
-
 
 const darkMode = ref(false);
 const theme = useTheme();
 
 const toggleTheme = () => {
-  console.log('toggleTheme')
   darkMode.value = !darkMode.value;
   theme.global.name.value = darkMode.value ? "customDarkTheme" : "customLightTheme";
 };
+
+const drawer = ref(true)
+
+const scrollbarTheme = ref('dark')
+
+watch(
+  () => theme.global.name.value,
+  (newValue, oldValue) => {
+
+    if (newValue === "customLightTheme") {
+      scrollbarTheme.value = "light";
+    } else {
+      scrollbarTheme.value = "dark";
+    }
+  },
+  { immediate: true } 
+);
+
+const closeSidebar = ()=>{
+  open.value = []
+}
 </script>
 
 <style scoped>
@@ -149,4 +163,36 @@ const toggleTheme = () => {
 a {
   text-decoration: none;
 }
+
+.light::-webkit-scrollbar {
+  width: 15px;
+}
+
+.light::-webkit-scrollbar-track {
+  background: #e6e6e6;
+  border-left: 1px solid #dadada;
+}
+
+.light::-webkit-scrollbar-thumb {
+  background: #b0b0b0;
+  border: solid 3px #e6e6e6;
+  border-radius: 7px;
+}
+
+
+.dark::-webkit-scrollbar {
+  width: 15px;
+}
+
+.dark::-webkit-scrollbar-track {
+  background: #202020;
+  border-left: 1px solid #2c2c2c;
+}
+
+.dark::-webkit-scrollbar-thumb {
+  background: #3e3e3e;
+  border: solid 3px #202020;
+  border-radius: 7px;
+}
+
 </style>

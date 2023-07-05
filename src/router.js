@@ -1,4 +1,4 @@
-import { createRouter, createWebHashHistory } from "vue-router";
+import { createRouter, createWebHashHistory, useRouter, useRoute } from "vue-router";
 import Home from './views/Home.vue'
 import Button from './views/Button.vue'
 import Font from './views/Font.vue'
@@ -12,7 +12,10 @@ import Pagination from './views/Pagination.vue'
 import Dialog from './views/Dialog.vue'
 import Carousel from './views/Carousel.vue'
 import Login from './views/Login.vue'
+import Device from './views/Device.vue'
 
+
+import { useLoginStore } from "./stores/login";
 
 const routes = [
     {
@@ -80,11 +83,27 @@ const routes = [
         name: 'login',
         component: Login
     },
+    {
+        path: '/device',
+        name: 'device',
+        component: Device
+    },
 ];
 
 const router = createRouter({
   history: createWebHashHistory(),
   routes,
 });
+
+// 未登入時只能在login page(router guard)
+router.beforeEach((to)=>{
+const store = useLoginStore();
+
+
+    if(to.name !== 'login' && store.isLogin === false){
+        return { name: 'login' }
+    }
+
+})
 
 export default router;
