@@ -9,8 +9,6 @@
       <Tree v-if="store.isLogin"></Tree>
       <Footer></Footer>
     </div>
-
-
   </v-app>
 </template>
 

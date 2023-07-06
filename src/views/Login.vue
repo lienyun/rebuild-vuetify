@@ -26,7 +26,7 @@
       ></v-text-field>
 
       <div class="d-flex align-center">
-        <v-checkbox label="在往後自動登入" type="checkbox"></v-checkbox>
+        <v-checkbox label="在往後自動登入" type="checkbox" hide-details></v-checkbox>
 
         <a class="text-decoration-none text-white" href="#" target="_blank">
           忘記密碼</a

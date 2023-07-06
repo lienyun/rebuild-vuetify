@@ -2,28 +2,131 @@
   <v-container>
     <v-row>
       <v-col cols="12" md="3">
-        <v-select v-model="deviceFilter.group" :items="deviceFilter.group" label="隸屬場域"></v-select>
+        <v-select
+          v-model="deviceFilter.group"
+          :items="deviceItems.group"
+          label="隸屬場域"
+          variant="outlined"
+          density="compact"
+        ></v-select>
       </v-col>
       <v-col cols="12" md="3">
-        <v-select v-model="deviceFilter.deviceName" :items="deviceFilter.deviceName" label="裝置名稱"></v-select>
+        <v-select
+          v-model="deviceFilter.deviceName"
+          :items="deviceItems.deviceName"
+          label="裝置名稱"
+          variant="outlined"
+          density="compact"
+        ></v-select>
       </v-col>
       <v-col cols="12" md="3">
-        <v-select v-model="deviceFilter.deviceType" :items="deviceFilter.deviceType" label="裝置類型"></v-select>
+        <v-select
+          v-model="deviceFilter.deviceType"
+          :items="deviceItems.deviceType"
+          label="裝置類型"
+          variant="outlined"
+          density="compact"
+        ></v-select>
       </v-col>
       <v-col cols="12" md="3">
-        <v-select v-model="deviceFilter.deviceId" :items="deviceFilter.deviceId" label="裝置ID"></v-select>
+        <v-text-field
+          v-model="deviceFilter.deviceId"
+          label="裝置ID"
+          variant="outlined"
+          density="compact"
+        ></v-text-field>
       </v-col>
       <v-col cols="12" md="3">
-        <v-select v-model="deviceFilter.gatewayId" :items="deviceFilter.gatewayId" label="閘道器ID"></v-select>
+        <v-text-field
+          v-model="deviceFilter.gatewayId"
+          label="閘道器ID"
+          variant="outlined"
+          density="compact"
+        ></v-text-field>
       </v-col>
       <v-col cols="12" md="3">
-        <v-select v-model="deviceFilter.isConnect" :items="deviceFilter.isConnect" label="連線狀態"></v-select>
+        <v-select
+          v-model="deviceFilter.isConnect"
+          :items="deviceItems.isConnect"
+          label="連線狀態"
+          variant="outlined"
+          density="compact"
+        ></v-select>
+      </v-col>
+      <v-col cols="12" md="3"></v-col>
+      <v-col cols="12" md="3" class="text-right">
+        <v-btn
+          prepend-icon="mdi-window-close"
+          color="red"
+          rounded="default"
+          @click="clearSelect"
+          >清除</v-btn
+        >
+        <v-btn
+          prepend-icon="mdi-magnify"
+          color="success"
+          rounded="default"
+          class="ml-5"
+          @click="search"
+          >搜尋</v-btn
+        >
       </v-col>
     </v-row>
   </v-container>
-  
+  <div class="d-flex justify-space-between align-center mt-5 mb-5">
+    <h3>查詢結果</h3>
 
-  <h3>查詢結果</h3>
+    <v-menu location="start">
+      <template v-slot:activator="{ props }">
+        <v-btn
+          color="primary"
+          v-bind="props"
+          icon="mdi-dots-vertical"
+          variant="plain"
+        >
+        </v-btn>
+      </template>
+      <v-list>
+        <v-list-item
+          v-for="(item, index) in more"
+          :key="index"
+          :value="index"
+        >
+          <v-list-item-title>{{ item }}</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>
+  </div>
+
+  <div class="d-flex justify-space-between align-center mt-5 mb-5">
+    <h4>裝置列表</h4>
+
+    <v-btn prepend-icon="mdi-filter" rounded="default">
+      選擇欄位
+
+      <v-menu
+        activator="parent"
+        location="start"
+        :close-on-content-click="false"
+      >
+        <v-list>
+          <v-list-item>
+            <v-checkbox
+              v-for="(item, index) in tableFilter"
+              :key="index"
+              :value="item.value"
+              density="compact"
+              :label="item.text"
+              hide-details
+              v-model="selected"
+            >
+            </v-checkbox>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+    </v-btn>
+  </div>
+
   <EasyDataTable
     :headers="headers"
     :items="items"
@@ -38,75 +141,79 @@
         >{{ replaceText.isConnect[items.isConnect] }}</v-chip
       >
     </template>
+    <template #pagination="{ prevPage, nextPage, isFirstPage, isLastPage }">
+      <v-btn
+        :disabled="isFirstPage"
+        @click="prevPage"
+        icon="mdi-chevron-left"
+        variant="plain"
+      ></v-btn>
+      <v-btn
+        :disabled="isLastPage"
+        @click="nextPage"
+        icon="mdi-chevron-right"
+        variant="plain"
+      ></v-btn>
+    </template>
   </EasyDataTable>
 </template>
 
 <script setup>
-import { ref, watch, reactive } from "vue";
+import { ref, watch, reactive, onMounted } from "vue";
 import { useTheme } from "vuetify";
-
+import axios from "axios";
 const theme = useTheme();
 
-const headers = [
+let url =
+  "https://ecloud.ntpc.edu.tw/infactory-backend/api/devicekanban/v2/groupbygatewaydevice?categories=gateway,powerMeter,airConditioner&groupid=296";
+
+onMounted(() => {
+  getDevice();
+});
+
+//datatable
+const headers = ref([
   { text: "裝置ID", value: "deviceId" },
   { text: "裝置名稱", value: "deviceName" },
   { text: "裝置類型", value: "deviceType" },
   { text: "隸屬場域", value: "group" },
   { text: "閘道器ID", value: "gatewayId" },
   { text: "連線狀態", value: "isConnect" },
-];
+]);
 
-const items = [
-  {
-    deviceId: "II09000D6F0005A5DD5B",
-    deviceName: "宏偉電表",
-    deviceType: "InSynerger雙CT型電力計",
-    group: "測試層架",
-    gatewayId: "BN90600347FFFE044340",
-    isConnect: false,
-  },
-  {
-    deviceId: "II09000D6F0005A5DD5B",
-    deviceName: "Insynerger電表",
-    deviceType: "InSynerger雙CT型電力計",
-    group: "測試層架",
-    gatewayId: "BN90600347FFFE044340",
-    isConnect: true,
-  },
-  {
-    deviceId: "II09000D6F0005A5DD5B",
-    deviceName: "神奇海螺",
-    deviceType: "InSynerger雙CT型電力計",
-    group: "測試層架",
-    gatewayId: "BN90600347FFFE044340",
-    isConnect: true,
-  },
-  {
-    deviceId: "II09000D6F0005A5DD5B",
-    deviceName: "貝果",
-    deviceType: "InSynerger雙CT型電力計",
-    group: "測試層架",
-    gatewayId: "BN90600347FFFE044340",
-    isConnect: false,
-  },
-  {
-    deviceId: "II09000D6F0005A5DD5B",
-    deviceName: "好餓",
-    deviceType: "InSynerger雙CT型電力計",
-    group: "測試層架",
-    gatewayId: "BN90600347FFFE044340",
-    isConnect: true,
-  },
-];
+const items = ref([]);
+
+const getDevice = async () => {
+  const res = await axios.get(url);
+  let allDeivices = res.data.data.deviceGroupByGatewayVos[0].deviceKanbans;
+  //console.log('allDeivices', allDeivices)
+  for (let category of allDeivices) {
+    //console.log('device',category.devices)
+    for (let device of category.devices) {
+      // console.log('device',device.deviceId)
+
+      let item = {
+        deviceId: device.deviceId,
+        deviceName: device.deviceName,
+        deviceType: device.deviceType,
+        group: "板橋國小",
+        gatewayId: device.gatewayId,
+        isConnect: device.connStatus,
+      };
+      items.value.push(item);
+    }
+  }
+};
 
 const replaceText = {
   isConnect: {
-    true: "連線",
-    false: "斷線",
+    1: "連線",
+    0: "斷線",
   },
 };
-const tableMode = ref("");
 
+//切換datatable顏色
+const tableMode = ref("");
 watch(
   () => theme.global.name.value,
   (newValue, oldValue) => {
@@ -120,6 +227,43 @@ watch(
 );
 
 
+//TODO: 匯出上傳三個點功能
+const more = ['批次上傳裝置名稱/場域名稱','匯出']
+
+// 選擇欄位勾選
+const tableFilter = ref([
+  { text: "裝置ID", value: "deviceId" },
+  { text: "裝置名稱", value: "deviceName" },
+  { text: "裝置類型", value: "deviceType" },
+  { text: "隸屬場域", value: "group" },
+  { text: "閘道器ID", value: "gatewayId" },
+  { text: "連線狀態", value: "isConnect" },
+]);
+
+const selected = ref([
+  "deviceId",
+  "deviceName",
+  "deviceType",
+  "group",
+  "gatewayId",
+  "isConnect",
+]);
+
+watch(
+  () => selected.value,
+  (newValue, oldValue) => {
+    console.log("newValue", newValue); //有watch到
+
+    let result = tableFilter.value.filter((title) => {
+      // 勾回來不會跟著變動
+      return newValue.includes(title.value);
+    });
+    console.log("result", result);
+    headers.value = result;
+  },
+  { immediate: true }
+);
+
 // 下拉式選單
 const deviceFilter = reactive({
   group: null,
@@ -128,17 +272,27 @@ const deviceFilter = reactive({
   deviceId: null,
   gatewayId: null,
   isConnect: null,
-})
-// TODO
-const deviceItems = reactive([
-  {group: ['1','2','3']},
-  {deviceName: ['1','2','3']},
-  {deviceType: ['1','2','3']},
-  {deviceId: ['1','2','3']},
-  {gatewayId: ['1','2','3']},
-  {isConnect: ['1','2','3']}
-])
+});
 
+const deviceItems = reactive({
+  group: ["1", "2"],
+  deviceName: ["1", "2"],
+  deviceType: ["1", "2", "3"],
+  isConnect: ["1", "2", "3"],
+});
+
+const clearSelect = () => {
+  deviceFilter.group = null;
+  deviceFilter.deviceName = null;
+  deviceFilter.deviceType = null;
+  deviceFilter.deviceId = null;
+  deviceFilter.gatewayId = null;
+  deviceFilter.isConnect = null;
+};
+
+const search = () => {
+  console.log("search");
+};
 </script>
 
 <style scoped>
@@ -171,9 +325,8 @@ const deviceItems = reactive([
   /* --easy-table-footer-font-size: 14px;
   --easy-table-footer-padding: 0px 10px;
   --easy-table-footer-height: 50px; */
-
-  /* --easy-table-rows-per-page-selector-width: 70px;
-  --easy-table-rows-per-page-selector-option-padding: 10px;
+  --easy-table-rows-per-page-selector-width: 70px;
+  /* --easy-table-rows-per-page-selector-option-padding: 10px;
   --easy-table-rows-per-page-selector-z-index: 1; */
 
   --easy-table-scrollbar-track-color: #2d3a4f;

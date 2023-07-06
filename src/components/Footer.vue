@@ -20,12 +20,6 @@ p {
   font-size: 12px;
   font-weight: 700;
 }
-footer {
-  position: absolute;
-  bottom: 0;
-  z-index: 0;
-  width: 100%
-}
 .isLogin {
   width: calc(100% - 55px);
 }

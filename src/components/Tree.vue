@@ -39,15 +39,15 @@
 import { ref } from "vue";
 const drawer = ref(false);
 
-const group = ["資安測試","台大"];
+const group = ref(["資安測試","台大","板橋國小"]);
 
 </script>
 
 <style scoped>
 .groupIcon {
   position: fixed;
-  bottom: 2rem;
-  right: 2rem;
+  bottom: 1rem;
+  right: 1rem;
 }
 
 .v-list .mainItem {
